@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Add Bootstrap CSS link -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Add Font Awesome link (ensure the URL is correct) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <!-- Add Bootstrap navbar (your existing navbar code) -->
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Navbar</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/"> <!-- Keep it as '/' to direct to the login page -->
+                            <i class="fas fa-home"></i> <!-- Home icon -->
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class "nav-link" href="/search"> <!-- Link to the Search page -->
+                            <i class="fas fa-search"></i> <!-- Search icon -->
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- Your content here -->
+    <div class="container-fluid" style="margin-top: 2rem;">
+        <div class="row" id="pagination-content">
+            {% for node in nodes %}
+                <div class="col-md-4 mb-3">
+                    <div class="card p-2 h-100">
+                        <h5 class="card-title">{{ node.paper_title }}</h5>
+                        <div class="card-body">
+                            <p class="card-text"><strong>Author:</strong> {{ node.author_name }}</p>
+                            <p class="card-text"><strong>Venue:</strong> {{ node.venue_name }}</p>
+                            <p class="card-text"><strong>Journal/Conference:</strong> {{ node.paper_type }}</p>
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn btn-primary" onclick="markActivity('john', '{{ node.paper_id }}', 'Summary')">
+                                <i class="fas fa-file-alt"></i> Summary
+                            </button>
+                            <button class="btn btn-info" onclick="markActivity('john', '{{ node.paper_id }}', 'Read')">
+                                <i class="fas fa-book-open"></i> Read
+                            </button>
+                            <button class="btn btn-success" onclick="markActivity('john', '{{ node.paper_id }}', 'Download')">
+                                <i class="fas fa-download"></i> Download
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <!-- No pagination in this version -->
+    <!-- Your Bootstrap JS and jQuery links (optional, but required for some Bootstrap features) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Your custom JavaScript that uses jQuery -->
+    <script>
+        // Your markActivity function (leave this code as is)
+        function markActivity(userName, paperId, activityType) {
+            $.ajax({
+                type: "POST",
+                url: "/mark_interest",
+                data: {
+                    user_name: userName,
+                    paper_id: paperId,
+                    activity_type: activityType
+                },
+                success: function (response) {
+                    if (response.success) {
+                        console.log(userName + " marked paper with ID " + paperId + " as " + activityType);
+                    } else {
+                        console.log("Failed to mark activity.");
+                    }
+                },
+                error: function () {
+                    console.log("Error occurred while marking activity.");
+                }
+            });
+        }
+    </script>
+</body>
+</html>

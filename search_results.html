@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+    </style>
+    <!-- Add Bootstrap CSS link -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Search Results</h1>
+        <form method="POST" id="search-form">
+            <div class="form-group">
+                <input type="text" name="search_term" class="form-control" placeholder="Search Papers and Authors">
+            </div>
+            <div class="form-check">
+                <input type="radio" class="form-check-input" id="search_author" name="search_author">
+                <label class="form-check-label" for="search-author">Search by Author</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" class="form-check-input" id="search_venue" name="search_venue">
+                <label class="form-check-label" for="search-venue">Search by Venue</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" class="form-check-input" id="search_title" name="search_title">
+                <label class="form-check-label" for="search-title">Search by Title</label>
+            </div>
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+        
+
+        <!-- Display search results as Bootstrap cards below this -->
+        <div id="search-results" class="row mt-3"></div>
+    </div>
+
+    <!-- Add Bootstrap JS and jQuery links (optional, but required for some Bootstrap features) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+            $(document).ready(function () {
+                $("#search-form").on("submit", function (e) {
+                    e.preventDefault();
+                    var search_term = $("input[name='search_term']").val();
+                    var search_author = $("input[name='search_author']").is(":checked");
+                    var search_venue = $("input[name='search_venue']").is(":checked");
+                    var search_title = $("input[name='search_title']").is(":checked");
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/search",
+                        data: {
+                            search_term: search_term,
+                            search_author: search_author,
+                            search_venue: search_venue,
+                            search_title: search_title
+                        },
+                        success: function (data) {
+                            var resultsDiv = $("#search-results");
+                            resultsDiv.empty();
+                            if (data.results.length > 0) {
+                                var cardDeck = $("<div class='card-deck'>"); // Create a card deck to group cards
+                                $.each(data.results, function (index, result) {
+                                    console.log(result)
+                                    var authorsList = result.authors.join(", ");
+                                    var card = $(
+                                        "<div class='col-md-4 mb-3'>" +
+                                        "<div class='card h-100 d-flex flex-column'>" +
+                                        "<div class='card-body flex-fill'>" +
+                                        "<h5 class='card-title'>" + result.paper_title + "</h5>" +
+                                        "<p class='card-text'><strong>Authors:</strong> " + authorsList + "</p>" +
+                                        "<p class='card-text'><strong>Venue:</strong> " + result.venue_name + "</p>" +
+                                        "<p class='card-text'><strong>Journal/Conference:</strong> " + result.paper_type + "</p>" +
+                                        "</div>" +
+                                        "<div class='card-footer'>" +
+                                        "<button class='btn btn-primary ml-1' onclick='trackActivity(\"Summary\", " + result.paper_id + ")'>" +
+                                        "<i class='fas fa-file-alt'></i> Summary</button>" +
+                                        "<button class='btn btn-info ml-1 mr-1' onclick='trackActivity(\"Read\", " + result.paper_id + ")'>" +
+                                        "<i class='fas fa-book-open'></i> Read</button>" +
+                                        "<button class='btn btn-success mr-2' onclick='trackActivity(\"Download\", " + result.paper_id + ")'>" +
+                                        "<i class='fas fa-download'></i> Download</button>" +
+                                        "</div>" +
+                                        "</div></div>"
+                                    );
+                                    cardDeck.append(card); // Append the card to the card deck
+                                });
+                                resultsDiv.append(cardDeck); // Append the card deck to the resultsDiv
+                            } else {
+                                resultsDiv.html("<p>No results found.</p>");
+                        }
+                    }
+                });
+            });
+        });
+
+        function trackActivity(activityType, paperId) {
+            $.ajax({
+                type: "POST",
+                url: "/mark_interest",
+                data: {
+                    user_name: "john", // Replace with actual user's name
+                    paper_id: paperId,
+                    activity_type: activityType
+                },
+                success: function (response) {
+                    if (response.success) {
+                        console.log("John marked paper with ID " + paperId + " as " + activityType);
+                    } else {
+                        console.log("Failed to track activity.");
+                    }
+                },
+                error: function () {
+                    console.log("Error occurred while tracking activity.");
+                }
+            });
+        }
+    </script>
+</body>
+</html>
