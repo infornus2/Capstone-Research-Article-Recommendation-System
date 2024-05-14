@@ -41,6 +41,11 @@ It makes the knowledge graph from the data
 ```bash
   python kg3(2).py
 ```
+ running the app.py to ge tthe server and website
+
+```bash
+  python app.py
+```
 
 
 ## Video
