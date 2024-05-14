@@ -50,24 +50,36 @@ It makes the knowledge graph from the data
 ## Cypher Queries
 
 In the cypher queries section first we project the node onto the graph. The nodes consist of  Keyword, Venue , Author and the paper node is interconnected among them.
-PaperAuthorProjection.cypher
-PaperKeywordProjection.cypher
-PaperVenueProjection.cypher
+```bash
+  PaperAuthorProjection.cypher
+  PaperKeywordProjection.cypher
+  PaperVenueProjection.cypher
+```
+
 
 In the next section we train the GraphSAGE model for the projections 
-GraphSageTrainingAuthor.cypher
-GraphSageTrainingKeyword.cypher
-GraphSageTrainingVenue.cypher
+```bash
+  GraphSageTrainingAuthor.cypher
+  GraphSageTrainingKeyword.cypher
+  GraphSageTrainingVenue.cypher
+```
+
 
 After training the model we generate vector-embeddings in the following stage
-GraphSageWriteAuthor.cypher
-GraphSageWriteKeyword.cypher
-GraphSageWriteVenue.cypher
+```bash
+  GraphSageWriteAuthor.cypher
+  GraphSageWriteKeyword.cypher
+  GraphSageWriteVenue.cypher
+```
+
 
 In the final stages these algorithms were tested
-LabelPropagationAlg.cypher
-LeidenAlg.cypher
-LouvainAlg.cypher
+```bash
+  LabelPropagationAlg.cypher
+  LeidenAlg.cypher
+  LouvainAlg.cypher
+```
+
 
 ## Video
 
